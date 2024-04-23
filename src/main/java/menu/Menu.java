@@ -196,7 +196,7 @@ public class Menu {
 
 
         for (Course course : professor.getCourses()) {
-            if (course.getTerm() == this.term) {
+            if (course.getTerm() == professor.getCurrentTerm ()) {
                 totalUnits += course.getUnit();
             }
         }
@@ -705,6 +705,9 @@ public class Menu {
         System.out.print ( "Enter postal code: " );
         String postalCode = scanner.nextLine ();
 
+        System.out.print ( "Enter current term: " );
+        Integer currentTerm = scanner.nextInt ();
+
 
         System.out.println ( "enter professorType(LECTURER,FACULTY_MEMBER): " );
         ProfessorType professorType = ProfessorType.valueOf ( scanner.nextLine ().toUpperCase () );
@@ -722,6 +725,7 @@ public class Menu {
                 .birthDate ( date )
                 .gender ( gender )
                 .address ( address )
+                .currentTerm ( currentTerm )
                 .build ();
 
 
@@ -758,6 +762,8 @@ public class Menu {
         System.out.print ( "Enter postal code: " );
         String postalCode = scanner.nextLine ();
 
+        System.out.print ( "Enter current term: " );
+        Integer currentTerm = scanner.nextInt ();
 
 
         Address address = Address.addressBuilder ()
@@ -773,6 +779,7 @@ public class Menu {
                 .birthDate ( date )
                 .gender ( gender )
                 .address ( address )
+                .currentTerm ( currentTerm )
                 .build ();
 
         return student;

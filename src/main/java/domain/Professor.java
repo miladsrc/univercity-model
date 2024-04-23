@@ -23,13 +23,17 @@ public class Professor extends Person {
     @Enumerated
     ProfessorType professorType;
 
+    @Column
+    Integer currentTerm;
+
 
 
     @Builder(builderMethodName = "professorBuilder")
-    public Professor(Integer integer, String firstName, String lastName, Date birthDate, String username, String password, Gender gender, Address address, List<Course> courses, ProfessorType professorType) {
+    public Professor(Integer integer, String firstName, String lastName, Date birthDate, String username, String password, Gender gender, Address address, List<Course> courses, ProfessorType professorType, Integer currentTerm) {
         super ( integer, firstName, lastName, birthDate, username, password, gender, address );
         this.courses = courses;
         this.professorType = professorType;
+        this.currentTerm = currentTerm;
     }
 
     public Professor(){}

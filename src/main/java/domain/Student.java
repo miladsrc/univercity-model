@@ -33,9 +33,10 @@ public class Student extends Person implements Serializable {
 
 
     @Builder(builderMethodName = "studentBuilder")
-    public Student(Integer integer, String firstName, String lastName, Date birthDate, String username, String password, Gender gender, Address address, List<TermInformation> termInformationList) {
+    public Student(Integer integer, String firstName, String lastName, Date birthDate, String username, String password, Gender gender, Address address, List<TermInformation> termInformationList,Integer currentTerm) {
         super ( integer, firstName, lastName, birthDate, username, password, gender, address);
         this.termInformationList = termInformationList;
+        this.currentTerm = currentTerm;
     }
 
 
