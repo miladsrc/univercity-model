@@ -46,7 +46,9 @@ public class Menu {
             } catch (Exception e) {
                 System.out.println ( "An error occurred: " + e.getMessage () );
             }
-        } else {
+        }
+
+
             while (true) {
 
                 employee = ApplicationContext.getEmployeeService ().existsByUsernameAndPassword ( username, password );
@@ -65,7 +67,7 @@ public class Menu {
                     System.out.println ( "Choice not found. Please try again!" );
                 }
             }
-        }
+
     }
 
 
