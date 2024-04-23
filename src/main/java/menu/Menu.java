@@ -704,6 +704,12 @@ public class Menu {
         System.out.print ( "Enter city: " );
         String city = scanner.nextLine ();
 
+        System.out.print ( "Enter username: " );
+        String username = scanner.nextLine ();
+
+        System.out.print ( "Enter password: " );
+        String password = scanner.nextLine ();
+
         System.out.print ( "Enter state: " );
         String state = scanner.nextLine ();
 
@@ -727,6 +733,8 @@ public class Menu {
         Professor professor = Professor.professorBuilder ()
                 .firstName ( firstName )
                 .lastName ( lastName )
+                .username ( username )
+                .password ( password )
                 .birthDate ( date )
                 .gender ( gender )
                 .address ( address )
@@ -753,6 +761,12 @@ public class Menu {
 
         System.out.println ( "Select gender (MALE/FEMALE/OTHER): " );
         Gender gender = Gender.valueOf ( scanner.nextLine ().toUpperCase () );
+
+        System.out.print ( "Enter username: " );
+        String username = scanner.nextLine ();
+
+        System.out.print ( "Enter password: " );
+        String password = scanner.nextLine ();
 
         System.out.print ( "Enter street: " );
         String street = scanner.nextLine ();
@@ -781,6 +795,8 @@ public class Menu {
                 .firstName ( firstName )
                 .lastName ( lastName )
                 .birthDate ( date )
+                .username ( username )
+                .password ( password )
                 .gender ( gender )
                 .address ( address )
                 .currentTerm ( currentTerm )
@@ -811,6 +827,12 @@ public class Menu {
         System.out.print ( "Enter city: " );
         String city = scanner.nextLine ();
 
+        System.out.print ( "Enter username: " );
+        String username = scanner.nextLine ();
+
+        System.out.print ( "Enter password: " );
+        String password = scanner.nextLine ();
+
         System.out.print ( "Enter state: " );
         String state = scanner.nextLine ();
 
@@ -835,6 +857,8 @@ public class Menu {
                 .firstName ( firstName )
                 .lastName ( lastName )
                 .birthDate ( date )
+                .username ( username )
+                .password ( password )
                 .gender ( gender )
                 .address ( address )
                 .salary ( salary )
