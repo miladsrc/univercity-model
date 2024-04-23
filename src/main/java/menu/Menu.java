@@ -4,7 +4,7 @@ import baseUtil.ApplicationContext;
 import domain.*;
 import service.*;
 
-import java.time.LocalDate;
+import java.sql.Date;
 import java.time.ZoneId;
 import java.util.*;
 
@@ -51,9 +51,13 @@ public class Menu {
 
             while (true) {
 
-                employee = ApplicationContext.getEmployeeService ().existsByUsernameAndPassword ( username, password );
-                professor = ApplicationContext.getProfessorService ().existsByUsernameAndPassword ( username, password );
-                student = ApplicationContext.getStudentService ().existsByUsernameAndPassword ( username, password );
+                try {
+                    employee = ApplicationContext.getEmployeeService ().existsByUsernameAndPassword ( username, password );
+                    professor = ApplicationContext.getProfessorService ().existsByUsernameAndPassword ( username, password );
+                    student = ApplicationContext.getStudentService ().existsByUsernameAndPassword ( username, password );
+                }catch (Exception e) {
+                }
+
                 if (employee.isPresent ()) {
                     employeeMenu ();
                     break;
@@ -689,8 +693,7 @@ public class Menu {
 
         System.out.print ( "Enter date of birth (yyyy-MM-dd): " );
         String dobString = scanner.nextLine ();
-        LocalDate dob = LocalDate.parse ( dobString );
-        Date date = Date.from ( dob.atStartOfDay ( defaultZoneId ).toInstant () );
+        Date date = Date.valueOf ( dobString );
 
         System.out.println ( "Select gender (MALE/FEMALE/OTHER): " );
         Gender gender = Gender.valueOf ( scanner.nextLine ().toUpperCase () );
@@ -746,8 +749,7 @@ public class Menu {
 
         System.out.print ( "Enter date of birth (yyyy-MM-dd): " );
         String dobString = scanner.nextLine ();
-        LocalDate dob = LocalDate.parse ( dobString );
-        Date date = Date.from ( dob.atStartOfDay ( defaultZoneId ).toInstant () );
+        Date date = Date.valueOf ( dobString );
 
         System.out.println ( "Select gender (MALE/FEMALE/OTHER): " );
         Gender gender = Gender.valueOf ( scanner.nextLine ().toUpperCase () );
@@ -784,6 +786,7 @@ public class Menu {
                 .currentTerm ( currentTerm )
                 .build ();
 
+        studentService.saveOrUpdate ( student );
         return student;
     }
 
@@ -797,8 +800,7 @@ public class Menu {
 
         System.out.print ( "Enter date of birth (yyyy-MM-dd): " );
         String dobString = scanner.nextLine ();
-        LocalDate dob = LocalDate.parse ( dobString );
-        Date date = Date.from ( dob.atStartOfDay ( defaultZoneId ).toInstant () );
+        Date date = Date.valueOf ( dobString );
 
         System.out.println ( "Select gender (MALE/FEMALE/OTHER): " );
         Gender gender = Gender.valueOf ( scanner.nextLine ().toUpperCase () );
@@ -837,6 +839,8 @@ public class Menu {
                 .address ( address )
                 .salary ( salary )
                 .build ();
+
+        employeeService.saveOrUpdate ( employee );
 
         return employee;
     }
@@ -877,6 +881,8 @@ public class Menu {
                 .term ( term )
                 .professor ( professor )
                 .build ();
+
+        courseService.saveOrUpdate ( course);
 
         return course;
     }
