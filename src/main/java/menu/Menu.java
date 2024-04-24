@@ -14,9 +14,9 @@ public class Menu {
     static ZoneId defaultZoneId = ZoneId.systemDefault ();
 
 
-    Optional<Employee> employee = null;
-    Optional<Student> student = null;
-    Optional<Professor> professor = null;
+    Optional<Employee> employee = Optional.empty ();
+    Optional<Professor> professor = Optional.empty ();
+    Optional<Student> student = Optional.empty ();
 
 
     StudentService studentService = ApplicationContext.getStudentService ();
@@ -32,136 +32,136 @@ public class Menu {
     static int counter = 0;
 
 
-    //MENU START ----------------------------------------------------------------------------------------------
+    //MAIN REFRENCE MENU ----------------------------------------------------------------------------------------------
 
     public void menu() {
 
         if (counter == 0) {
             try {
                 System.out.println ( "Please enter your username:" );
-                username = scanner.next ();
+                username = scanner.nextLine ();
                 System.out.println ( "Please enter your password:" );
-                password = scanner.next ();
+                password = scanner.nextLine ();
                 counter++;
             } catch (Exception e) {
                 System.out.println ( "An error occurred: " + e.getMessage () );
             }
         }
 
+        while (true) {
+            try {
+                System.out.println ( "what is your role :" +
+                        "\n1: employee" +
+                        "\n2: professor" +
+                        "\n3: student" );
+                int choice = scanner.nextInt ();
+                switch (choice) {
+                    case 1:
+                        employee = ApplicationContext.getEmployeeService ().existsByUsernameAndPassword ( username, password );
+                        employeeMenu ();
 
-            while (true) {
+                    case 2:
+                        professor = ApplicationContext.getProfessorService ().existsByUsernameAndPassword ( username, password );
+                        professorMenu ();
 
-                try {
-                    employee = ApplicationContext.getEmployeeService ().existsByUsernameAndPassword ( username, password );
-                    professor = ApplicationContext.getProfessorService ().existsByUsernameAndPassword ( username, password );
-                    student = ApplicationContext.getStudentService ().existsByUsernameAndPassword ( username, password );
-                }catch (Exception e) {
+                    case 3:
+                        student = ApplicationContext.getStudentService ().existsByUsernameAndPassword ( username, password );
+                        studentMenu ();
                 }
-
-                if (employee.isPresent ()) {
-                    employeeMenu ();
-                    break;
-                } else if (professor.isPresent ()) {
-                    professorMenu ();
-                    break;
-                } else if (student.isPresent ()) {
-                    studentMenu ();
-                    break;
-                } else {
-                    System.out.println ( "Choice not found. Please try again!" );
-                }
+            } catch (Exception e) {
+                System.out.println ( "An error occurred: " + e.getMessage () );
+                System.out.println ( "Please enter your username:" );
+                username = scanner.nextLine ();
+                System.out.println ( "Please enter your password:" );
+                password = scanner.nextLine ();
             }
-
+        }
     }
-
-
-    //MAIN REFERENCE MENU
-
 
 
     //PROFESSION MENU----------------------------------------------------------------
     public void professorMenu() {
-        Professor professor1 = professorService.findById(professor.get().getId());
-        System.out.println("Welcome " + professor1.getFirstName() + "! Here are your options:");
+        Professor professor1 = professorService.findById ( professor.get ().getId () );
+        System.out.println ( "Welcome " + professor1.getFirstName () + "! Here are your options:" );
         while (true) {
-            System.out.println("1. View your profile");
-            System.out.println("2. Record student grades");
-            System.out.println("3. View salary slip");
-            System.out.println("4. Exit");
+            System.out.println ( "1. View your profile" );
+            System.out.println ( "2. Record student grades" );
+            System.out.println ( "3. View salary slip" );
+            System.out.println ( "4. Exit" );
 
-            int choice = scanner.nextInt();
+            int choice = scanner.nextInt ();
             switch (choice) {
                 case 1:
-                    viewProfessorProfile(professor1);
+                    viewProfessorProfile ( professor1 );
                     break;
                 case 2:
-                    recordStudentGrades(professor1);
+                    recordStudentGrades ( professor1 );
                     break;
                 case 3:
-                    viewSalarySlip(professor1);
+                    viewSalarySlip ( professor1 );
                     break;
                 case 4:
-                    System.out.println("Exiting...");
+                    System.out.println ( "Exiting..." );
                     return;
                 default:
-                    System.out.println("Invalid option. Please try again.");
+                    System.out.println ( "Invalid option. Please try again." );
             }
         }
     }
 
     //1----------------------------------------------------------------
     private void viewProfessorProfile(Professor professor) {
-        System.out.println("Professor ID: " + professor.getId());
-        System.out.println("First Name: " + professor.getFirstName());
-        System.out.println("Last Name: " + professor.getLastName());
-        System.out.println("Birth Date: " + professor.getBirthDate());
-        System.out.println("Username: " + professor.getUsername());
-        System.out.println("Password: " + professor.getPassword());
-        System.out.println("Gender: " + professor.getGender());
-        System.out.println("Address: " + professor.getAddress());
+        System.out.println ( "Professor ID: " + professor.getId () );
+        System.out.println ( "First Name: " + professor.getFirstName () );
+        System.out.println ( "Last Name: " + professor.getLastName () );
+        System.out.println ( "Birth Date: " + professor.getBirthDate () );
+        System.out.println ( "Username: " + professor.getUsername () );
+        System.out.println ( "Password: " + professor.getPassword () );
+        System.out.println ( "Gender: " + professor.getGender () );
+        System.out.println ( "Address: " + professor.getAddress () );
     }
 
     //2----------------------------------------------------------------
     private void recordStudentGrades(Professor professor) {
-        List<Student> students = studentService.findAll();
+        List<Student> students = studentService.findAll ();
         for (Student student : students) {
-            System.out.println (student.getId ()+" : "+student.getFirstName()+" "+student.getLastName());
+            System.out.println ( student.getId () + " : " + student.getFirstName () + " " + student.getLastName () );
         }
 
-        System.out.println("Enter the student ID to record the grade (enter 0 to finish):");
+        System.out.println ( "Enter the student ID to record the grade (enter 0 to finish):" );
         int studentId;
-        while ((studentId = scanner.nextInt()) != 0) {
-            Student student = findStudentById(students, studentId);
+        while ((studentId = scanner.nextInt ()) != 0) {
+            Student student = findStudentById ( students, studentId );
             if (student == null) {
-                System.out.println("Student not found. Please enter a valid student ID.");
+                System.out.println ( "Student not found. Please enter a valid student ID." );
                 continue;
             }
 
-            System.out.println("Enter the grade for student " + student.getFirstName() + " " + student.getLastName() + ":");
+            System.out.println ( "Enter the grade for student " + student.getFirstName () + " " + student.getLastName () + ":" );
             int grade = scanner.nextInt ();
 
             Student student1 = studentService.findById ( studentId );
             TermInformation studentGrade = new TermInformation ();
-            studentGrade.setStudent(student);
-            studentGrade.setGrade(grade);
+            studentGrade.setStudent ( student );
+            studentGrade.setGrade ( grade );
 
-            for (Course course: professor.getCourses ()
-                 ) {
-                System.out.println (course.getId ()+" " + course.getName ());
+            for (Course course : professor.getCourses ()
+            ) {
+                System.out.println ( course.getId () + " " + course.getName () );
             }
-            System.out.println ("Please choose between courses :");
+            System.out.println ( "Please choose between courses :" );
             int index = scanner.nextInt ();
             studentGrade.setCourse ( professor.getCourses ().get ( index ) );
 
             // Save the student grade
             ApplicationContext.getTermInfoService ().saveOrUpdate ( studentGrade );
-            System.out.println("Grade recorded successfully.");
+            System.out.println ( "Grade recorded successfully." );
         }
     }
 
     private Student findStudentById(List<Student> students, int studentId) {
         for (Student student : students) {
-            if (student.getId() == studentId) {
+            if (student.getId () == studentId) {
                 return student;
             }
         }
@@ -173,25 +173,25 @@ public class Menu {
         final long fixedSalary = 5_000_000L;
         final long salaryPerUnit = 1_000_000L;
 
-        int unitsTaught = getUnitsTaughtByProfessor(professor);
+        int unitsTaught = getUnitsTaughtByProfessor ( professor );
 
         long totalSalary;
-        if (professor.getProfessorType() == ProfessorType.FACULTY_MEMBER) {
+        if (professor.getProfessorType () == ProfessorType.FACULTY_MEMBER) {
             totalSalary = fixedSalary + (unitsTaught * salaryPerUnit);
         } else {
             totalSalary = unitsTaught * salaryPerUnit;
         }
 
-        System.out.println("Professor Name: " + professor.getFirstName() + " " + professor.getLastName());
-        System.out.println("Total Units Taught: " + unitsTaught);
-        System.out.println("Total Salary: " + totalSalary);
+        System.out.println ( "Professor Name: " + professor.getFirstName () + " " + professor.getLastName () );
+        System.out.println ( "Total Units Taught: " + unitsTaught );
+        System.out.println ( "Total Salary: " + totalSalary );
     }
 
     private int getUnitsTaughtByProfessor(Professor professor) {
 
 
         int totalUnits = 0;
-        if(professor.getCourses ()==null||professor.getCourses().isEmpty ()){
+        if (professor.getCourses () == null || professor.getCourses ().isEmpty ()) {
             return 0;
         }
 
@@ -201,17 +201,15 @@ public class Menu {
 //                .sum();
 
 
-        for (Course course : professor.getCourses()) {
-            if (course.getTerm() == professor.getCurrentTerm ()) {
-                totalUnits += course.getUnit();
+        for (Course course : professor.getCourses ()) {
+            if (course.getTerm () == professor.getCurrentTerm ()) {
+                totalUnits += course.getUnit ();
             }
         }
 
         return totalUnits;
 
     }
-
-
 
 
     //STUDENT MENU----------------------------------------------------------------
@@ -325,7 +323,7 @@ public class Menu {
     }
 
     private void registerCoursesForStudent(Student student1, List<Course> selectedCourses) {
-        TermInfoService termInfoService = ApplicationContext.getTermInfoService();
+        TermInfoService termInfoService = ApplicationContext.getTermInfoService ();
 
         List<TermInformation> termInfoList = new ArrayList<> ();
 
@@ -333,11 +331,11 @@ public class Menu {
 
             TermInformation termInfo = new TermInformation ();
 
-            termInfo.setStudent(student1);
-            termInfo.setCourse(course);
-            termInfo.setGrade(0);
+            termInfo.setStudent ( student1 );
+            termInfo.setCourse ( course );
+            termInfo.setGrade ( 0 );
 
-            termInfoList.add (termInfo);
+            termInfoList.add ( termInfo );
         }
         student1.setTermInformationList ( termInfoList );
         studentService.saveOrUpdate ( student1 );
@@ -358,7 +356,7 @@ public class Menu {
     private boolean isCurrentTerm(TermInformation termInfo) {
         int courseTerm = termInfo.getCourse ().getTerm ();
         int studentTerm = termInfo.getStudent ().getCurrentTerm ();
-        return courseTerm == studentTerm ;
+        return courseTerm == studentTerm;
     }
 
     private List<Course> getPassedCourses(Student student1) {
@@ -393,19 +391,18 @@ public class Menu {
 
     //4----------------------------------------------------------------
     private void viewCoursesWithPoints() {
-        List<TermInformation> termInformationList = student.get().getTermInformationList();
+        List<TermInformation> termInformationList = student.get ().getTermInformationList ();
 
-        if (termInformationList.isEmpty()) {
-            System.out.println("You have not taken any courses yet.");
+        if (termInformationList.isEmpty ()) {
+            System.out.println ( "You have not taken any courses yet." );
         } else {
-            System.out.println("Courses taken:");
+            System.out.println ( "Courses taken:" );
             for (TermInformation termInfo : termInformationList) {
-                Course course = termInfo.getCourse();
-                System.out.println("Course ID: " + course.getId() + ", Name: " + course.getName() + ", Grade: " + termInfo.getGrade());
+                Course course = termInfo.getCourse ();
+                System.out.println ( "Course ID: " + course.getId () + ", Name: " + course.getName () + ", Grade: " + termInfo.getGrade () );
             }
         }
     }
-
 
 
     //EMPLOYEE MENU ----------------------------------------------------------------
@@ -523,14 +520,13 @@ public class Menu {
     }
 
 
-
     private void CRUDEmployee() {
 
         while (true) {
             System.out.println ( "1. Create Employee" );
-            System.out.println ( "2. Read Employee" );
-            System.out.println ( "3. Update Employee" );
-            System.out.println ( "4. Delete Employee" );
+            System.out.println ( "2. Update Employee" );
+            System.out.println ( "3. Delete Employee" );
+            System.out.println ( "4. View all Employees" );
             System.out.println ( "5. Exit" );
 
             System.out.print ( "Enter your choice: " );
@@ -539,7 +535,6 @@ public class Menu {
             switch (choice) {
                 case 1:
                     addEmployee ();
-                    System.out.println ( "Employee added successfully!" );
                     break;
                 case 2:
                     List<Employee> employeeList = employeeService.findAll ();
@@ -549,8 +544,7 @@ public class Menu {
                     System.out.print ( "Enter employee ID to update: " );
                     Integer employeeId = scanner.nextInt ();
                     Employee updateEmployee = employeeService.findById ( employeeId );
-                    updateEmployee.setId ( employeeId );
-                    employeeService.saveOrUpdate ( updateEmployee );
+                    updateEmployee( updateEmployee );
                     System.out.println ( "Employee information updated successfully!" );
                     break;
                 case 3:
@@ -580,10 +574,10 @@ public class Menu {
     private void CRUDProfessor() {
 
         while (true) {
-            System.out.println ( "1. Create Professor" );
-            System.out.println ( "2. Read Professor" );
-            System.out.println ( "3. Update Professor" );
-            System.out.println ( "4. Delete Professor" );
+            System.out.println ( "1. Add Professor" );
+            System.out.println ( "2. Update Professors" );
+            System.out.println ( "3. Delete Professor" );
+            System.out.println ( "4. View All Professors" );
             System.out.println ( "5. Exit" );
 
             System.out.print ( "Enter your choice: " );
@@ -592,19 +586,27 @@ public class Menu {
             switch (choice) {
                 case 1:
                     addProfessor ();
-                    System.out.println ( "Professor added successfully!" );
                     break;
                 case 2:
-                    List<Professor> professorList = professorService.findAll ();
+                    List<Professor> professorList = professorService.findAll();
                     for (Professor professor : professorList) {
-                        System.out.println ( professor.getId () + ": " + professor );
+                        System.out.println(professor.getId() + ": " + professor);
                     }
-                    System.out.print ( "Enter professor ID to update: " );
-                    Integer professorId = scanner.nextInt ();
-                    Professor updateProfessor = professorService.findById ( professorId );
-                    updateProfessor.setId ( professorId );
-                    professorService.saveOrUpdate ( updateProfessor );
-                    System.out.println ( "Professor information updated successfully!" );
+                    System.out.println("Enter professor id to continue... :");
+
+                    try {
+                        int choice1 = scanner.nextInt();
+                        Professor professor1 = professorService.findById(choice1);
+                        if (professor1 != null) {
+                            updateProfessor(Optional.ofNullable(professor1));
+                        } else {
+                            System.out.println("Professor with ID " + choice1 + " not found.");
+                        }
+                    } catch (InputMismatchException ime) {
+                        System.out.println("Invalid input. Please enter a valid integer for professor ID.");
+                    } catch (Exception e) {
+                        System.out.println("An error occurred: " + e.getMessage());
+                    }
                     break;
                 case 3:
                     List<Professor> professorList1 = professorService.findAll ();
@@ -614,12 +616,12 @@ public class Menu {
                     System.out.print ( "Enter professor ID to delete: " );
                     Integer deleteProfessorId = scanner.nextInt ();
                     professorService.deleteById ( deleteProfessorId );
-                    System.out.println ( "Professor deleted successfully!" );
                     break;
                 case 4:
                     List<Professor> professorList2 = professorService.findAll ();
                     for (Professor professor : professorList2)
                         System.out.println ( professor.getId () + ": " + professor );
+                    break;
                 case 5:
                     menu ();
                     break;
@@ -629,6 +631,8 @@ public class Menu {
         }
     }
 
+
+    //CRUD STUDENT
     private void CRUDStudent() {
 
         while (true) {
@@ -645,272 +649,604 @@ public class Menu {
             switch (choice) {
                 case 1:
                     addStudent ();
-                    System.out.println ( "Student added successfully!" );
                     break;
                 case 2:
-                    List<Student> studetnList = studentService.findAll ();
-                    for (Student student : studetnList) {
-                        System.out.println ( student.getId () + ": " + student );
+                    try {
+                        List<Student> studentList = studentService.findAll ();
+                        for (Student student : studentList) {
+                            System.out.println ( student.getId () + ": " + student );
+                        }
+                        System.out.print ( "Enter student ID to update: " );
+                        Integer studentId = scanner.nextInt ();
+                        Student updatedStudent1 = studentService.findById ( studentId );
+                        if (updatedStudent1 != null) {
+                            updateStudent ( updatedStudent1 );
+                        } else {
+                            System.out.println ( "Student with ID " + studentId + " not found." );
+                        }
+                    } catch (Exception e) {
+                        System.out.println ( "Error occurred: " + e.getMessage () );
                     }
-                    System.out.print ( "Enter student ID to update: " );
-                    Integer studentId = scanner.nextInt ();
-                    Student updatedStudent = studentService.findById ( studentId );
-                    updatedStudent.setId ( studentId );
-                    studentService.saveOrUpdate ( updatedStudent );
-                    System.out.println ( "Student information updated successfully!" );
                     break;
                 case 3:
-                    List<Student> studetnList1 = studentService.findAll ();
-                    for (Student student : studetnList1) {
+                    List<Student> studentList1 = studentService.findAll ();
+                    for (Student student : studentList1) {
                         System.out.println ( student.getId () + ": " + student );
                     }
                     System.out.print ( "Enter student ID to delete: " );
                     Integer deleteStudentId = scanner.nextInt ();
                     studentService.deleteById ( deleteStudentId );
-                    System.out.println ( "Student deleted successfully!" );
                     break;
                 case 4:
-                    List<Student> studetnList2 = studentService.findAll ();
-                    for (Student student : studetnList2)
+                    List<Student> studentList2 = studentService.findAll ();
+                    for (Student student : studentList2) {
                         System.out.println ( student.getId () + ": " + student );
-
+                    }
+                    break;
                 case 5:
                     menu ();
                     break;
                 default:
                     System.out.println ( "Invalid choice. Please try again." );
             }
+
         }
     }
 
     public Professor addProfessor() {
+        ProfessorType professorType = null;
+        try {
+            System.out.print ( "Enter first name: " );
+            String firstName = scanner.next ();
+            scanner.nextLine ();
 
-        System.out.print ( "Enter first name: " );
-        String firstName = scanner.nextLine ();
+            System.out.print ( "Enter last name: " );
+            String lastName = scanner.nextLine ();
 
-        System.out.print ( "Enter last name: " );
-        String lastName = scanner.nextLine ();
+            System.out.print ( "Enter date of birth (yyyy-MM-dd): " );
+            String dobString = scanner.nextLine ();
+            Date date = Date.valueOf ( dobString );
 
-        System.out.print ( "Enter date of birth (yyyy-MM-dd): " );
-        String dobString = scanner.nextLine ();
-        Date date = Date.valueOf ( dobString );
+            System.out.println ( "Select gender (MALE/FEMALE/OTHER): " );
+            Gender gender = Gender.valueOf ( scanner.nextLine ().toUpperCase () );
 
-        System.out.println ( "Select gender (MALE/FEMALE/OTHER): " );
-        Gender gender = Gender.valueOf ( scanner.nextLine ().toUpperCase () );
+            System.out.print ( "Enter street: " );
+            String street = scanner.nextLine ();
 
-        System.out.print ( "Enter street: " );
-        String street = scanner.nextLine ();
+            System.out.print ( "Enter city: " );
+            String city = scanner.nextLine ();
 
-        System.out.print ( "Enter city: " );
-        String city = scanner.nextLine ();
+            System.out.print ( "Enter username: " );
+            String username = scanner.nextLine ();
 
-        System.out.print ( "Enter username: " );
-        String username = scanner.nextLine ();
+            System.out.print ( "Enter password: " );
+            String password = scanner.nextLine ();
 
-        System.out.print ( "Enter password: " );
-        String password = scanner.nextLine ();
+            System.out.print ( "Enter state: " );
+            String state = scanner.nextLine ();
 
-        System.out.print ( "Enter state: " );
-        String state = scanner.nextLine ();
+            System.out.print ( "Enter postal code: " );
+            String postalCode = scanner.nextLine ();
 
-        System.out.print ( "Enter postal code: " );
-        String postalCode = scanner.nextLine ();
+            System.out.print ( "Enter current term: " );
+            Integer currentTerm = scanner.nextInt ();
 
-        System.out.print ( "Enter current term: " );
-        Integer currentTerm = scanner.nextInt ();
+            while (professorType == null) {
+                System.out.println ( "enter professorType(1-LECTURER,\n2-FACULTY_MEMBER): " );
+                int choice = scanner.nextInt ();
+                scanner.nextLine ();
 
-
-        System.out.println ( "enter professorType(LECTURER,FACULTY_MEMBER): " );
-        ProfessorType professorType = ProfessorType.valueOf ( scanner.nextLine ().toUpperCase () );
-
-        Address address = Address.addressBuilder ()
-                .street ( street )
-                .city ( city )
-                .state ( state )
-                .postalCode ( postalCode )
-                .build ();
-
-        Professor professor = Professor.professorBuilder ()
-                .firstName ( firstName )
-                .lastName ( lastName )
-                .username ( username )
-                .password ( password )
-                .birthDate ( date )
-                .gender ( gender )
-                .address ( address )
-                .currentTerm ( currentTerm )
-                .build ();
+                switch (choice) {
+                    case 1:
+                        professorType = ProfessorType.LECTURER;
+                        break;
+                    case 2:
+                        professorType = ProfessorType.FACULTY_MEMBER;
+                        break;
+                    default:
+                        System.out.println ( "Invalid choice. Please enter 1 for LECTURER or 2 for FACULTY_MEMBER." );
+                        break;
+                }
+            }
 
 
-        return professor;
+            Address address = Address.addressBuilder ()
+                    .street ( street )
+                    .city ( city )
+                    .state ( state )
+                    .postalCode ( postalCode )
+                    .build ();
 
+            Professor professor = Professor.professorBuilder ()
+                    .firstName ( firstName )
+                    .lastName ( lastName )
+                    .username ( username )
+                    .password ( password )
+                    .birthDate ( date )
+                    .gender ( gender )
+                    .address ( address )
+                    .currentTerm ( currentTerm )
+                    .professorType ( professorType )
+                    .build ();
+            Professor professor1 = professorService.saveOrUpdate ( professor );
+
+            if (professor1 != null) {
+                System.out.println ( professor.getFirstName () + " done processing !\n" );
+                return professor1;
+            } else {
+                return professor1;
+            }
+
+
+        } catch (Exception e) {
+            e.printStackTrace ();
+        }
+
+        return null;
     }
 
+    public Professor updateProfessor(Optional<Professor> professor) {
+        ProfessorType pt = null;
+        try {
+            System.out.print ( "Enter first name: " );
+            String firstName = scanner.next ();
+            scanner.nextLine ();
+
+            System.out.print ( "Enter last name: " );
+            String lastName = scanner.nextLine ();
+
+            System.out.print ( "Enter date of birth (yyyy-MM-dd): " );
+            String dobString = scanner.nextLine ();
+            Date date = Date.valueOf ( dobString );
+
+            System.out.println ( "Select gender (MALE/FEMALE/OTHER): " );
+            Gender gender = Gender.valueOf ( scanner.nextLine ().toUpperCase () );
+
+            System.out.print ( "Enter street: " );
+            String street = scanner.nextLine ();
+
+            System.out.print ( "Enter city: " );
+            String city = scanner.nextLine ();
+
+            System.out.print ( "Enter username: " );
+            String username = scanner.nextLine ();
+
+            System.out.print ( "Enter password: " );
+            String password = scanner.nextLine ();
+
+            System.out.print ( "Enter state: " );
+            String state = scanner.nextLine ();
+
+            System.out.print ( "Enter postal code: " );
+            String postalCode = scanner.nextLine ();
+
+            System.out.print ( "Enter current term: " );
+            Integer currentTerm = scanner.nextInt ();
+
+
+            while (pt == null) {
+                System.out.println ( "enter professorType(1-LECTURER,\n2-FACULTY_MEMBER): " );
+                int choice = scanner.nextInt ();
+                scanner.nextLine ();
+
+                switch (choice) {
+                    case 1:
+                        pt = ProfessorType.LECTURER;
+                        break;
+                    case 2:
+                        pt = ProfessorType.FACULTY_MEMBER;
+                        break;
+                    default:
+                        System.out.println ( "Invalid choice. Please enter 1 for LECTURER or 2 for FACULTY_MEMBER." );
+                        break;
+                }
+            }
+            Address address = Address.addressBuilder ()
+                    .street ( street )
+                    .city ( city )
+                    .state ( state )
+                    .postalCode ( postalCode )
+                    .build ();
+
+            Professor professor1 = Professor.professorBuilder ()
+                    .integer ( professor.get ().getId () )
+                    .firstName ( firstName )
+                    .lastName ( lastName )
+                    .username ( username )
+                    .password ( password )
+                    .birthDate ( date )
+                    .gender ( gender )
+                    .address ( address )
+                    .currentTerm ( currentTerm )
+                    .professorType ( pt )
+                    .build ();
+            Professor professor2 = professorService.saveOrUpdate ( professor1 );
+
+            if (professor2 != null) {
+                System.out.println ( professor.get ().getFirstName () + " done processing !\n" );
+                return professor2;
+            } else {
+                return professor1;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace ();
+        }
+        return null;
+    }
+
+
+    // UPDATE STUDENT
 
     private Student addStudent() {
+        try {
+            System.out.print ( "Enter first name: " );
+            String firstName = scanner.nextLine ();
 
-        System.out.print ( "Enter first name : " );
-        String firstName = scanner.nextLine ();
+            System.out.print ( "Enter last name: " );
+            String lastName = scanner.nextLine ();
 
-        System.out.print ( "Enter last name: " );
-        String lastName = scanner.nextLine ();
+            System.out.print ( "Enter date of birth (yyyy-MM-dd): " );
+            String dobString = scanner.nextLine ();
+            Date date = Date.valueOf ( dobString );
 
-        System.out.print ( "Enter date of birth (yyyy-MM-dd): " );
-        String dobString = scanner.nextLine ();
-        Date date = Date.valueOf ( dobString );
+            System.out.println ( "Select gender (MALE/FEMALE/OTHER): " );
+            Gender gender = Gender.valueOf ( scanner.nextLine ().toUpperCase () );
 
-        System.out.println ( "Select gender (MALE/FEMALE/OTHER): " );
-        Gender gender = Gender.valueOf ( scanner.nextLine ().toUpperCase () );
+            System.out.print ( "Enter username: " );
+            String username = scanner.nextLine ();
 
-        System.out.print ( "Enter username: " );
-        String username = scanner.nextLine ();
+            System.out.print ( "Enter password: " );
+            String password = scanner.nextLine ();
 
-        System.out.print ( "Enter password: " );
-        String password = scanner.nextLine ();
+            System.out.print ( "Enter street: " );
+            String street = scanner.nextLine ();
 
-        System.out.print ( "Enter street: " );
-        String street = scanner.nextLine ();
+            System.out.print ( "Enter city: " );
+            String city = scanner.nextLine ();
 
-        System.out.print ( "Enter city: " );
-        String city = scanner.nextLine ();
+            System.out.print ( "Enter state: " );
+            String state = scanner.nextLine ();
 
-        System.out.print ( "Enter state: " );
-        String state = scanner.nextLine ();
+            System.out.print ( "Enter postal code: " );
+            String postalCode = scanner.nextLine ();
 
-        System.out.print ( "Enter postal code: " );
-        String postalCode = scanner.nextLine ();
+            System.out.print ( "Enter current term: " );
+            Integer currentTerm = scanner.nextInt ();
 
-        System.out.print ( "Enter current term: " );
-        Integer currentTerm = scanner.nextInt ();
+            Address address = Address.addressBuilder ()
+                    .street ( street )
+                    .city ( city )
+                    .state ( state )
+                    .postalCode ( postalCode )
+                    .build ();
 
+            Student student = Student.studentBuilder ()
+                    .firstName ( firstName )
+                    .lastName ( lastName )
+                    .birthDate ( date )
+                    .username ( username )
+                    .password ( password )
+                    .gender ( gender )
+                    .address ( address )
+                    .currentTerm ( currentTerm )
+                    .build ();
 
-        Address address = Address.addressBuilder ()
-                .street ( street )
-                .city ( city )
-                .state ( state )
-                .postalCode ( postalCode )
-                .build ();
-
-        Student student = Student.studentBuilder ()
-                .firstName ( firstName )
-                .lastName ( lastName )
-                .birthDate ( date )
-                .username ( username )
-                .password ( password )
-                .gender ( gender )
-                .address ( address )
-                .currentTerm ( currentTerm )
-                .build ();
-
-        studentService.saveOrUpdate ( student );
-        return student;
+            Student student1 = studentService.saveOrUpdate ( student );
+            if (student1 != null) {
+                System.out.println ( student1.getFirstName () + " done processing !\n" );
+            }
+            return student1;
+        } catch (Exception e) {
+            System.out.println ( "Error occurred: " + e.getMessage () );
+        }
+        return null;
     }
+
+
+    private Student updateStudent(Student student) {
+        try {
+            System.out.print ( "Enter first name: " );
+            String firstName = scanner.next ();
+            scanner.nextLine ();
+
+            System.out.print ( "Enter last name: " );
+            String lastName = scanner.nextLine ();
+
+            System.out.print ( "Enter date of birth (yyyy-MM-dd): " );
+            String dobString = scanner.nextLine ();
+            Date date = Date.valueOf ( dobString );
+
+            System.out.println ( "Select gender (MALE/FEMALE/OTHER): " );
+            Gender gender = Gender.valueOf ( scanner.nextLine ().toUpperCase () );
+
+            System.out.print ( "Enter username: " );
+            String username = scanner.nextLine ();
+
+            System.out.print ( "Enter password: " );
+            String password = scanner.nextLine ();
+
+            System.out.print ( "Enter street: " );
+            String street = scanner.nextLine ();
+
+            System.out.print ( "Enter city: " );
+            String city = scanner.nextLine ();
+
+            System.out.print ( "Enter state: " );
+            String state = scanner.nextLine ();
+
+            System.out.print ( "Enter postal code: " );
+            String postalCode = scanner.nextLine ();
+
+            System.out.print ( "Enter current term: " );
+            Integer currentTerm = scanner.nextInt ();
+
+            Address address = Address.addressBuilder ()
+                    .street ( street )
+                    .city ( city )
+                    .state ( state )
+                    .postalCode ( postalCode )
+                    .build ();
+
+            Student student2 = Student.studentBuilder ()
+                    .integer ( student.getId () )
+                    .firstName ( firstName )
+                    .lastName ( lastName )
+                    .birthDate ( date )
+                    .username ( username )
+                    .password ( password )
+                    .gender ( gender )
+                    .address ( address )
+                    .currentTerm ( currentTerm )
+                    .build ();
+
+            Student student1 = studentService.saveOrUpdate ( student2 );
+            if (student1 != null) {
+                System.out.println ( student1.getFirstName () + " done processing !\n" );
+            }
+            return student1;
+        } catch (Exception e) {
+            System.out.println ( "Error occurred: " + e.getMessage () );
+        }
+        return null;
+    }
+
+
+    //ADD EMPLOYEE
 
     public Employee addEmployee() {
+        try {
+            System.out.print("Enter first name: ");
+            String firstName = scanner.next ();
+            scanner.nextLine ();
 
-        System.out.print ( "Enter first name: " );
-        String firstName = scanner.nextLine ();
+            System.out.print("Enter last name: ");
+            String lastName = scanner.nextLine();
 
-        System.out.print ( "Enter last name: " );
-        String lastName = scanner.nextLine ();
+            System.out.print("Enter date of birth (yyyy-MM-dd): ");
+            String dobString = scanner.nextLine();
+            Date date = Date.valueOf(dobString);
 
-        System.out.print ( "Enter date of birth (yyyy-MM-dd): " );
-        String dobString = scanner.nextLine ();
-        Date date = Date.valueOf ( dobString );
+            System.out.println("Select gender (MALE/FEMALE/OTHER): ");
+            Gender gender = Gender.valueOf(scanner.nextLine().toUpperCase());
 
-        System.out.println ( "Select gender (MALE/FEMALE/OTHER): " );
-        Gender gender = Gender.valueOf ( scanner.nextLine ().toUpperCase () );
+            System.out.print("Enter street: ");
+            String street = scanner.nextLine();
 
-        System.out.print ( "Enter street: " );
-        String street = scanner.nextLine ();
+            System.out.print("Enter city: ");
+            String city = scanner.nextLine();
 
-        System.out.print ( "Enter city: " );
-        String city = scanner.nextLine ();
+            System.out.print("Enter username: ");
+            String username = scanner.nextLine();
 
-        System.out.print ( "Enter username: " );
-        String username = scanner.nextLine ();
+            System.out.print("Enter password: ");
+            String password = scanner.nextLine();
 
-        System.out.print ( "Enter password: " );
-        String password = scanner.nextLine ();
+            System.out.print("Enter state: ");
+            String state = scanner.nextLine();
 
-        System.out.print ( "Enter state: " );
-        String state = scanner.nextLine ();
+            System.out.print("Enter postal code: ");
+            String postalCode = scanner.nextLine();
 
-        System.out.print ( "Enter postal code: " );
-        String postalCode = scanner.nextLine ();
 
-        System.out.println ( "Is the Employee active? (true/false): " );
-        boolean isActive = Boolean.parseBoolean ( scanner.nextLine () );
 
-        System.out.print ( "Enter salary: " );
-        Double salary = scanner.nextDouble ();
-        scanner.nextLine ();
+            System.out.print("Enter salary: ");
+            Double salary = scanner.nextDouble();
 
-        Address address = Address.addressBuilder ()
-                .street ( street )
-                .city ( city )
-                .state ( state )
-                .postalCode ( postalCode )
-                .build ();
+            Address address = Address.addressBuilder()
+                    .street(street)
+                    .city(city)
+                    .state(state)
+                    .postalCode(postalCode)
+                    .build();
 
-        Employee employee = Employee.EmplouyeeBuilder ()
-                .firstName ( firstName )
-                .lastName ( lastName )
-                .birthDate ( date )
-                .username ( username )
-                .password ( password )
-                .gender ( gender )
-                .address ( address )
-                .salary ( salary )
-                .build ();
+            Employee employee = Employee.EmplouyeeBuilder()
+                    .firstName(firstName)
+                    .lastName(lastName)
+                    .birthDate(date)
+                    .username(username)
+                    .password(password)
+                    .gender(gender)
+                    .address(address)
+                    .salary(salary)
+                    .build();
 
-        employeeService.saveOrUpdate ( employee );
-
-        return employee;
+            Employee employee1 = employeeService.saveOrUpdate ( employee );
+            if (employee1 != null) {
+                System.out.println ( employee1.getFirstName () + " done processing !\n" );
+            }
+            return employee1;
+        } catch (Exception e) {
+            System.out.println("An error occurred: " + e.getMessage());
+            return null;
+        }
     }
 
+
+    public Employee updateEmployee(Employee employee) {
+        try {
+            System.out.print("Enter first name: ");
+            String firstName = scanner.next ();
+            scanner.nextLine ();
+
+            System.out.print("Enter last name: ");
+            String lastName = scanner.nextLine();
+
+            System.out.print("Enter date of birth (yyyy-MM-dd): ");
+            String dobString = scanner.nextLine();
+            Date date = Date.valueOf(dobString);
+
+            System.out.println("Select gender (MALE/FEMALE/OTHER): ");
+            Gender gender = Gender.valueOf(scanner.nextLine().toUpperCase());
+
+            System.out.print("Enter street: ");
+            String street = scanner.nextLine();
+
+            System.out.print("Enter city: ");
+            String city = scanner.nextLine();
+
+            System.out.print("Enter username: ");
+            String username = scanner.nextLine();
+
+            System.out.print("Enter password: ");
+            String password = scanner.nextLine();
+
+            System.out.print("Enter state: ");
+            String state = scanner.nextLine();
+
+            System.out.print("Enter postal code: ");
+            String postalCode = scanner.nextLine();
+
+
+            System.out.print("Enter salary: ");
+            Double salary = scanner.nextDouble();
+
+
+            Address address = Address.addressBuilder()
+                    .street(street)
+                    .city(city)
+                    .state(state)
+                    .postalCode(postalCode)
+                    .build();
+
+            Employee employee1 = Employee.EmplouyeeBuilder()
+                    .firstName(firstName)
+                    .lastName(lastName)
+                    .birthDate(date)
+                    .username(username)
+                    .password(password)
+                    .gender(gender)
+                    .address(address)
+                    .integer ( employee.getId () )
+                    .salary(salary)
+                    .build();
+
+            Employee employee2 = employeeService.saveOrUpdate ( employee1 );
+            if (employee1 != null) {
+                System.out.println ( employee2.getFirstName () + " done processing !\n" );
+            }
+            return employee1;
+        } catch (Exception e) {
+            System.out.println("An error occurred: " + e.getMessage());
+            return null;
+        }
+    }
+
+
+
+
+    //ADD COURSE
     public Course addCourse() {
+        try {
+            System.out.print("Enter course name: ");
+            String name = scanner.nextLine();
 
-        System.out.print ( "Enter course name: " );
-        String name = scanner.nextLine ();
+            System.out.print("Enter course capacity (0-30): ");
+            int capacity = scanner.nextInt();
 
-        System.out.print ( "Enter course capacity (0-30): " );
-        int capacity = scanner.nextInt ();
-        scanner.nextLine ();
+            System.out.println("Select course type (MATH, BIOLOGY, CHEMISTRY, PHYSICS, LITERATURE): ");
+            CourseType courseType = CourseType.valueOf(scanner.nextLine().toUpperCase());
 
-        System.out.println ( "Select course type (MATH," +
-                "    BIOLOGY," +
-                "    CHEMISTRY," +
-                "    PHYSICS," +
-                "    LITERATURE): " );
-        CourseType courseType = CourseType.valueOf ( scanner.nextLine ().toUpperCase () );
+            List<Professor> professorList = professorService.findAll();
+            for (Professor professor : professorList) {
+                System.out.println(professor.getId() + ": " + professor);
+            }
+            System.out.println("Enter professor ID: ");
+            int professorId = scanner.nextInt();
+            Professor professor = professorService.findById(professorId);
 
+            System.out.print("Enter term: ");
+            int term = scanner.nextInt();
 
-        List<Professor> professorList2 = professorService.findAll ();
-        for (Professor professor : professorList2)
-            System.out.println ( professor.getId () + ": " + professor );
-        System.out.println ( "Enter professor ID: " );
-        int professorId = scanner.nextInt ();
-        scanner.nextLine ();
-        Professor professor = professorService.findById ( professorId );
+            System.out.println("Enter Unit (must be between 1 and 4):");
+            int unit = scanner.nextInt();
 
-        System.out.print ( "Enter term: " );
-        int term = scanner.nextInt ();
-        scanner.nextLine ();
+            Course course = Course.courseBuilder()
+                    .courseType(courseType)
+                    .name(name)
+                    .capacity(capacity)
+                    .term(term)
+                    .professor(professor)
+                    .unit(unit)
+                    .build();
 
-        Course course = Course.courseBuilder ()
-                .courseType ( courseType )
-                .name ( name )
-                .capacity ( capacity )
-                .term ( term )
-                .professor ( professor )
-                .build ();
-
-        courseService.saveOrUpdate ( course);
-
-        return course;
+            courseService.saveOrUpdate(course);
+            return course;
+        } catch (IllegalArgumentException e) {
+            System.out.println("Invalid input: " + e.getMessage());
+            return null;
+        } catch (Exception e) {
+            System.out.println("An unexpected error occurred: " + e.getMessage());
+            return null;
+        }
     }
 
+
+
+    public Course updateCourse(Course course) {
+        try {
+            System.out.print("Enter course name: ");
+            String name = scanner.nextLine();
+
+            System.out.print("Enter course capacity (0-30): ");
+            int capacity = scanner.nextInt();
+
+            System.out.println("Select course type (MATH, BIOLOGY, CHEMISTRY, PHYSICS, LITERATURE): ");
+            CourseType courseType = CourseType.valueOf(scanner.nextLine().toUpperCase());
+
+            List<Professor> professorList = professorService.findAll();
+            for (Professor professor : professorList) {
+                System.out.println(professor.getId() + ": " + professor);
+            }
+            System.out.println("Enter professor ID: ");
+            int professorId = scanner.nextInt();
+            Professor professor = professorService.findById(professorId);
+
+            System.out.print("Enter term: ");
+            int term = scanner.nextInt();
+
+            System.out.println("Enter Unit (must be between 1 and 4):");
+            int unit = scanner.nextInt();
+
+            Course updatedCourse = Course.courseBuilder()
+                    .courseType(courseType)
+                    .integer(course.getId())
+                    .name(name)
+                    .capacity(capacity)
+                    .term(term)
+                    .professor(professor)
+                    .unit(unit)
+                    .build();
+
+            return courseService.saveOrUpdate(updatedCourse);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Invalid input: " + e.getMessage());
+            return null;
+        } catch (Exception e) {
+            System.out.println("An unexpected error occurred: " + e.getMessage());
+            return null;
+        }
+    }
 }
 
 

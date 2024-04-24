@@ -11,7 +11,7 @@ import java.util.Date;
 @Entity
 @Setter
 @Getter
-@ToString
+@ToString(callSuper = true)
 @NoArgsConstructor
 @SoftDelete
 public class Employee extends Person{

@@ -51,7 +51,7 @@ public class Course extends BaseEntity<Integer> {
     List<TermInformation> termInformationList = new ArrayList<> ();
 
     @Builder(builderMethodName = "courseBuilder")
-    public Course(Integer integer, String name, int capacity, CourseType courseType, Professor professor, int term, List<TermInformation> termInformationList) {
+    public Course(Integer integer, String name, int capacity, CourseType courseType, Professor professor, int term, List<TermInformation> termInformationList, int unit) {
         super ( integer );
         this.name = name;
         this.capacity = capacity;
@@ -59,6 +59,7 @@ public class Course extends BaseEntity<Integer> {
         this.professor = professor;
         this.term = term;
         this.termInformationList = termInformationList;
+        this.unit = unit;
     }
 
 

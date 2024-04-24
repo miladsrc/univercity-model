@@ -23,6 +23,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
+@ToString(callSuper = true)
 @SoftDelete
 public class Student extends Person implements Serializable {
 

@@ -11,9 +11,9 @@ import java.util.List;
 
 @Setter
 @Getter
-@ToString
 @Entity
 @SoftDelete
+@ToString(callSuper = true)
 public class Professor extends Person {
 
     @OneToMany(mappedBy = "professor",cascade = CascadeType.ALL)
@@ -37,4 +37,5 @@ public class Professor extends Person {
     }
 
     public Professor(){}
+
 }
