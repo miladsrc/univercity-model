@@ -16,10 +16,8 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@ToString
 @Entity
 @SoftDelete
-
 public class Course extends BaseEntity<Integer> {
 
     @NotNull(message = "name can't be null'")
@@ -62,8 +60,6 @@ public class Course extends BaseEntity<Integer> {
         this.unit = unit;
     }
 
-
-
     public Course(String name, int capacity, CourseType courseType, Professor professor, int term, List<TermInformation> termInformationList) {
         this.name = name;
         this.capacity = capacity;
@@ -75,5 +71,19 @@ public class Course extends BaseEntity<Integer> {
 
     public Course(int term) {
         this.term = term;
+    }
+
+    @Override
+    public String toString() {
+        return "Course{" +
+                "name='" + name + '\'' +
+                ", capacity=" + capacity +
+                ", courseType=" + courseType +
+                ", professor=" + professor +
+                ", term=" + term +
+                ", unit=" + unit +
+                ", termInformationList=" + termInformationList +
+                ", id=" + id +
+                '}';
     }
 }

@@ -71,9 +71,10 @@ public class Menu {
             } catch (Exception e) {
                 System.out.println ( "An error occurred: " + e.getMessage () );
                 System.out.println ( "Please enter your username:" );
-                username = scanner.nextLine ();
+                username = scanner.next ();
+                scanner.nextLine ();
                 System.out.println ( "Please enter your password:" );
-                password = scanner.nextLine ();
+                password = scanner.next ();
             }
         }
     }
@@ -127,10 +128,9 @@ public class Menu {
         for (Student student : students) {
             System.out.println ( student.getId () + " : " + student.getFirstName () + " " + student.getLastName () );
         }
-
         System.out.println ( "Enter the student ID to record the grade (enter 0 to finish):" );
         int studentId;
-        while ((studentId = scanner.nextInt ()) != 0) {
+        while ((studentId = scanner.nextInt ()) > 0) {
             Student student = findStudentById ( students, studentId );
             if (student == null) {
                 System.out.println ( "Student not found. Please enter a valid student ID." );
@@ -153,7 +153,6 @@ public class Menu {
             int index = scanner.nextInt ();
             studentGrade.setCourse ( professor.getCourses ().get ( index ) );
 
-            // Save the student grade
             ApplicationContext.getTermInfoService ().saveOrUpdate ( studentGrade );
             System.out.println ( "Grade recorded successfully." );
         }
@@ -184,27 +183,27 @@ public class Menu {
 
         System.out.println ( "Professor Name: " + professor.getFirstName () + " " + professor.getLastName () );
         System.out.println ( "Total Units Taught: " + unitsTaught );
-        System.out.println ( "Total Salary: " + totalSalary );
+        System.out.println ( "Total Salary: " + totalSalary+"\n" );
+
     }
 
     private int getUnitsTaughtByProfessor(Professor professor) {
 
 
         int totalUnits = 0;
-        if (professor.getCourses () == null || professor.getCourses ().isEmpty ()) {
-            return 0;
-        }
+//        if (professor.getCourses () == null || professor.getCourses ().isEmpty ()) {
+//            return 0;
+//        }
 
 //        int totalUnits = professor.getCourses().stream()
-//                .filter(course -> this.term = course.getTerm())
+//                .filter(course -> professor.getCurrentTerm () = course.getTerm())
 //                .mapToInt(Course::getUnit)
 //                .sum();
 
 
         for (Course course : professor.getCourses ()) {
-            if (course.getTerm () == professor.getCurrentTerm ()) {
                 totalUnits += course.getUnit ();
-            }
+
         }
 
         return totalUnits;
@@ -468,55 +467,80 @@ public class Menu {
     private void CRUDCourse() {
 
         while (true) {
-            System.out.println ( "1. Create Course" );
-            System.out.println ( "2. Read Course" );
-            System.out.println ( "3. Update Course" );
-            System.out.println ( "4. Delete Course" );
-            System.out.println ( "5. Exit" );
+            System.out.println("1. Create Course");
+            System.out.println("2. Read Course");
+            System.out.println("3. Update Course");
+            System.out.println("4. Delete Course");
+            System.out.println("5. Exit");
 
-            System.out.print ( "Enter your choice: " );
-            int choice = scanner.nextInt ();
+            System.out.print("Enter your choice: ");
+            int choice;
+            try {
+                choice = scanner.nextInt();
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid input. Please enter a number.");
+                continue;
+            }
 
             switch (choice) {
                 case 1:
-                    addCourse ();
-                    System.out.println ( "Course added successfully!" );
+                    try {
+                        addCourse();
+                        break;
+                    } catch (Exception e) {
+                        System.out.println("An error occurred while adding the course: " + e.getMessage());
+                    }
                     break;
                 case 2:
-                    List<Course> courseList = courseService.findAll ();
-                    for (Course course : courseList) {
-                        System.out.println ( course.getId () + ": " + course );
+                    try {
+                        List<Course> courseList = courseService.findAll();
+                        for (Course course : courseList) {
+                            System.out.println(course.getId() + ": " + course);
+                        }
+                        break;
+                    } catch (Exception e) {
+                        System.out.println("An error occurred while retrieving courses: " + e.getMessage());
                     }
                     break;
                 case 3:
-                    List<Course> courseList1 = courseService.findAll ();
-                    for (Course course : courseList1) {
-                        System.out.println ( course.getId () + ": " + course );
+                    try {
+                        List<Course> courseList1 = courseService.findAll();
+                        for (Course course : courseList1) {
+                            System.out.println(course.getId() + ": " + course);
+                        }
+                        System.out.print("Enter course ID to update: ");
+                        Integer courseId = scanner.nextInt();
+                        Course updateCourse1 = courseService.findById(courseId);
+                        updateCourse(updateCourse1);
+                        System.out.println("Course information updated successfully!");
+                        break;
+                    } catch (Exception e) {
+                        System.out.println("An error occurred while updating the course: " + e.getMessage());
                     }
-                    System.out.print ( "Enter course ID to update: " );
-                    Integer courseId = scanner.nextInt ();
-                    Course updateCourse = courseService.findById ( courseId );
-                    updateCourse.setId ( courseId );
-                    courseService.saveOrUpdate ( updateCourse );
-                    System.out.println ( "Course information updated successfully!" );
                     break;
                 case 4:
-                    List<Course> courseList2 = courseService.findAll ();
-                    for (Course course : courseList2) {
-                        System.out.println ( course.getId () + ": " + course );
+                    try {
+                        List<Course> courseList2 = courseService.findAll();
+                        for (Course course : courseList2) {
+                            System.out.println(course.getId() + ": " + course);
+                        }
+                        System.out.print("Enter course ID to delete: ");
+                        Integer deleteCourseId = scanner.nextInt();
+                        courseService.deleteById(deleteCourseId);
+                        System.out.println("Course deleted successfully!");
+                        break;
+                    } catch (Exception e) {
+                        System.out.println("An error occurred while deleting the course: " + e.getMessage());
                     }
-                    System.out.print ( "Enter course ID to delete: " );
-                    Integer deleteCourseId = scanner.nextInt ();
-                    courseService.deleteById ( deleteCourseId );
-                    System.out.println ( "Course deleted successfully!" );
                     break;
                 case 5:
-                    menu ();
+                    menu();
                     break;
                 default:
-                    System.out.println ( "Invalid choice. Please try again." );
+                    System.out.println("Invalid choice. Please try again.");
             }
         }
+
     }
 
 
@@ -1158,66 +1182,117 @@ public class Menu {
     //ADD COURSE
     public Course addCourse() {
         try {
-            System.out.print("Enter course name: ");
-            String name = scanner.nextLine();
+            System.out.print ( "Enter course name: " );
+            String name = scanner.next ();
+            scanner.nextLine ();
 
-            System.out.print("Enter course capacity (0-30): ");
-            int capacity = scanner.nextInt();
+            System.out.print ( "Enter course capacity (0-30): " );
+            int capacity = scanner.nextInt ();
 
-            System.out.println("Select course type (MATH, BIOLOGY, CHEMISTRY, PHYSICS, LITERATURE): ");
-            CourseType courseType = CourseType.valueOf(scanner.nextLine().toUpperCase());
+            System.out.println ( "Select course type (MATH, BIOLOGY, CHEMISTRY, PHYSICS, LITERATURE): " );
+            String input = scanner.next ().toUpperCase ();
+            CourseType courseType;
 
-            List<Professor> professorList = professorService.findAll();
-            for (Professor professor : professorList) {
-                System.out.println(professor.getId() + ": " + professor);
+            switch (input) {
+                case "MATH":
+                    courseType = CourseType.MATH;
+                    break;
+                case "BIOLOGY":
+                    courseType = CourseType.BIOLOGY;
+                    break;
+                case "CHEMISTRY":
+                    courseType = CourseType.CHEMISTRY;
+                    break;
+                case "PHYSICS":
+                    courseType = CourseType.PHYSICS;
+                    break;
+                case "LITERATURE":
+                    courseType = CourseType.LITERATURE;
+                    break;
+                default:
+                    System.out.println ( "Invalid course type. Please try again." );
+                    courseType = null;
+                    break;
             }
-            System.out.println("Enter professor ID: ");
-            int professorId = scanner.nextInt();
-            Professor professor = professorService.findById(professorId);
 
-            System.out.print("Enter term: ");
-            int term = scanner.nextInt();
+                List<Professor> professorList = professorService.findAll ();
+                for (Professor professor : professorList) {
+                    System.out.println ( professor.getId () + ": " + professor );
+                }
+                System.out.println ( "Enter professor ID: " );
+                int professorId = scanner.nextInt ();
+                Professor professor = professorService.findById ( professorId );
 
-            System.out.println("Enter Unit (must be between 1 and 4):");
-            int unit = scanner.nextInt();
+                System.out.print ( "Enter term: " );
+                int term = scanner.nextInt ();
 
-            Course course = Course.courseBuilder()
-                    .courseType(courseType)
-                    .name(name)
-                    .capacity(capacity)
-                    .term(term)
-                    .professor(professor)
-                    .unit(unit)
-                    .build();
+                System.out.println ( "Enter Unit (must be between 1 and 4):" );
+                int unit = scanner.nextInt ();
 
-            courseService.saveOrUpdate(course);
-            return course;
-        } catch (IllegalArgumentException e) {
-            System.out.println("Invalid input: " + e.getMessage());
-            return null;
-        } catch (Exception e) {
-            System.out.println("An unexpected error occurred: " + e.getMessage());
-            return null;
+                Course course = Course.courseBuilder ()
+                        .courseType ( courseType )
+                        .name ( name )
+                        .capacity ( capacity )
+                        .term ( term )
+                        .professor ( professor )
+                        .unit ( unit )
+                        .build ();
+
+                courseService.saveOrUpdate ( course );
+                return course;
+            } catch(IllegalArgumentException e){
+                System.out.println ( "Invalid input: " + e.getMessage () );
+                return null;
+            } catch(Exception e){
+                System.out.println ( "An unexpected error occurred: " + e.getMessage () );
+                return null;
+            }
         }
-    }
+
 
 
 
     public Course updateCourse(Course course) {
         try {
             System.out.print("Enter course name: ");
-            String name = scanner.nextLine();
+            String name = scanner.next ();
+            scanner.nextLine ();
 
             System.out.print("Enter course capacity (0-30): ");
             int capacity = scanner.nextInt();
 
             System.out.println("Select course type (MATH, BIOLOGY, CHEMISTRY, PHYSICS, LITERATURE): ");
-            CourseType courseType = CourseType.valueOf(scanner.nextLine().toUpperCase());
+            String input = scanner.next ().toUpperCase();
+            CourseType courseType;
+
+            switch (input) {
+                case "MATH":
+                    courseType = CourseType.MATH;
+                    break;
+                case "BIOLOGY":
+                    courseType = CourseType.BIOLOGY;
+                    break;
+                case "CHEMISTRY":
+                    courseType = CourseType.CHEMISTRY;
+                    break;
+                case "PHYSICS":
+                    courseType = CourseType.PHYSICS;
+                    break;
+                case "LITERATURE":
+                    courseType = CourseType.LITERATURE;
+                    break;
+                default:
+                    System.out.println ( "Invalid course type. Please try again." );
+                    courseType = null;
+                    break;
+            }
 
             List<Professor> professorList = professorService.findAll();
             for (Professor professor : professorList) {
                 System.out.println(professor.getId() + ": " + professor);
             }
+
+
             System.out.println("Enter professor ID: ");
             int professorId = scanner.nextInt();
             Professor professor = professorService.findById(professorId);
